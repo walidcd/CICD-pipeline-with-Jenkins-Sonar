@@ -47,18 +47,15 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'SECRET_NVD_KEY')]) {
-
-                        dependencyCheck arguments: """
-                            --scan '.'
-                            --format "HTML"
-                            --format "JSON"
+                        dependencyCheck(
+                            additionalArguments: """
+                            --scan ./
+                            --format ALL
                             --nvdApiKey ${SECRET_NVD_KEY}
-                            --prettyPrint
-                        """,
-                        odcInstallation: 'dependency-check'
-
-                        // Publish results safely
-                        dependencyCheckPublisher pattern: 'dependency-check-report.html'
+                            """,
+                            odcInstallation: 'dependency-check' // Must match tool name
+                        )
+                        dependencyCheckPublisher(pattern: 'dependency-check-report.html')
                     }
                 }
             }
