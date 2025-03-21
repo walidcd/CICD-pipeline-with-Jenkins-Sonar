@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Imge') {
             steps {
                 script {
                     sh '/usr/local/bin/docker build -t walidboutahar/spring:${env.BUILD_NUMBER} .'
