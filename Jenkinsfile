@@ -77,8 +77,8 @@ pipeline {
                     def trivyHtmlReportFile = "trivy-report-${env.BUILD_NUMBER}.html"
                     sh """
                         export TRIVY_DB_REPOSITORY="github"
-                        trivy image --skip-update --format template --template @/usr/local/share/trivy/templates/html.tpl \\
-                            ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} > ${trivyHtmlReportFile}
+                        trivy --download-db-only
+                        trivy image --skip-db-update --format template --template @/usr/local/share/trivy/templates/html.tpl ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} > ${trivyHtmlReportFile}
                     """
                     publishHTML([
                         reportName: 'Trivy Security Scan',
@@ -89,6 +89,7 @@ pipeline {
                 }
             }
         }
+
 
 
         stage('Push to DockerHub') {
