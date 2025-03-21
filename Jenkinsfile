@@ -43,15 +43,15 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check Scan') {
+        stage('OWASP Dependency Check Scan and Publish') {
             steps {
                 script {
                     dependencyCheck additionalArguments: """
-                    -o './' 
+                    -o './'
                     -s './'
-                    -f 'ALL' 
-                    --prettyPrint
-                    --nvdApiKey ${NVD_API_KEY} """, odcInstallation: "dependency-check"
+                    -f 'ALL'
+                    --prettyPrint""",
+                    odcInstallation: "dependency-check"
 
                     dependencyCheckPublisher pattern: 'dependency-check-report.html'
                 }
