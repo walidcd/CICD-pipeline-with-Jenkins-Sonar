@@ -9,13 +9,22 @@ pipeline {
         NVD_API_KEY = credentials('NVD-API')
         DOCKERHUB_CREDENTIALS = "docker-hub-credentials-id" 
         DOCKER_IMAGE_NAME = 'walidboutahar/spring'
-        PATH = "/opt/homebrew/bin:$PATH"
+        PATH = "/opt/homebrew/bin:${env.PATH}"
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: "${GITHUB_REPO}"
+            }
+        }
+        stage('Verify Environment') {
+            steps {
+                script {
+                    sh 'echo "Current PATH: $PATH"'
+                    sh 'which trivy || echo "Trivy not found"'
+                    sh 'ls -l /opt/homebrew/bin/trivy'
+                }
             }
         }
 
@@ -65,11 +74,17 @@ pipeline {
         stage('Trivy Scan') {
             steps {
                 script {
+                    def trivyHtmlReportFile = "trivy-report-${env.BUILD_NUMBER}.html"
                     sh """
-                        /opt/homebrew/bin/trivy image --format template \
-                        --template @/usr/local/share/trivy/templates/html.tpl \
-                        walidboutahar/spring:21 > trivy-report-21.html
+                        trivy image --format template --template @/usr/local/share/trivy/templates/html.tpl \
+                        ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} > ${trivyHtmlReportFile}
                     """
+                    publishHTML([
+                        reportName: 'Trivy Security Scan',
+                        reportDir: '',
+                        reportFiles: trivyHtmlReportFile,
+                        keepAll: true
+                    ])
                 }
             }
         }
