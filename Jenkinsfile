@@ -64,16 +64,12 @@ pipeline {
 
         stage('Trivy Scan') {
             steps {
-                stage('Trivy Scan') {
-                    steps {
-                        script {
-                            sh """
-                                /opt/homebrew/bin/trivy image --format template \
-                                --template @/usr/local/share/trivy/templates/html.tpl \
-                                walidboutahar/spring:21 > trivy-report-21.html
-                            """
-                        }
-                    }
+                script {
+                    sh """
+                        /opt/homebrew/bin/trivy image --format template \
+                        --template @/usr/local/share/trivy/templates/html.tpl \
+                        walidboutahar/spring:21 > trivy-report-21.html
+                    """
                 }
             }
         }
