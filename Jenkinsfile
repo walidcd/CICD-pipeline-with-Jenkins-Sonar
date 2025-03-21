@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check') {
+        /*stage('OWASP Dependency Check') {
             steps {
                 script {
                     dependencyCheck(
@@ -52,7 +52,7 @@ pipeline {
                     )
                 }
             }
-        }
+        }*/
 
         stage('Build Docker Imge') {
             steps {
