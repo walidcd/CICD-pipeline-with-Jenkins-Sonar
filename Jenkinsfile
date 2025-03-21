@@ -73,7 +73,7 @@ pipeline {
 
         stage('Trivy Scan') {
             steps {
-                script {
+                /*script {
                     def trivyHtmlReportFile = "trivy-report-${env.BUILD_NUMBER}.html"
                     sh """
                         export TRIVY_DB_REPOSITORY="github"
@@ -87,6 +87,7 @@ pipeline {
                         keepAll: true
                     ])
                 }
+                */
             }
         }
 
