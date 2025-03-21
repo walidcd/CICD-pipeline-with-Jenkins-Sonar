@@ -43,17 +43,20 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check Scan and Publish') {
+        stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: """
-                    -o './'
-                    -s './'
-                    -f 'ALL'
-                    --prettyPrint""",
-                    odcInstallation: "dependency-check"
-
-                    dependencyCheckPublisher pattern: 'dependency-check-report.html'
+                    withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'SECRET_NVD_KEY')]) {
+                        dependencyCheck(
+                            additionalArguments: """
+                            --scan ./
+                            --format ALL
+                            --nvdApiKey ${SECRET_NVD_KEY}
+                            """,
+                            odcInstallation: 'dependency-check' // Must match tool name
+                        )
+                        dependencyCheckPublisher(pattern: 'dependency-check-report.html')
+                    }
                 }
             }
         }
